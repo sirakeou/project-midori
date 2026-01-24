@@ -1,4 +1,12 @@
-import { User, Star, Award, BookOpen } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { User as UserIcon, Star, Award, BookOpen, AlertCircle } from 'lucide-react'
+import { userRepository, skillAssessmentRepository } from '@/core'
+import type { User, LatestSkillAssessment } from '@/core'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert'
+
+// テスト用社員ID（後で認証コンテキストから取得するように変更）
+const TEST_EMPLOYEE_ID = '100001'
 
 /**
  * マイスキルページコンポーネント
@@ -6,25 +14,78 @@ import { User, Star, Award, BookOpen } from 'lucide-react'
  * ユーザーのスキル情報を表示・管理するページです。
  */
 export function MySkillPage() {
-  // 仮のスキルデータ
-  const skills = [
-    { id: 1, name: 'React', level: 4, category: 'フロントエンド' },
-    { id: 2, name: 'TypeScript', level: 4, category: 'プログラミング言語' },
-    { id: 3, name: 'Node.js', level: 3, category: 'バックエンド' },
-    { id: 4, name: 'Python', level: 3, category: 'プログラミング言語' },
-    { id: 5, name: 'AWS', level: 2, category: 'インフラ' },
-  ]
+  const [user, setUser] = useState<User | null>(null)
+  const [skills, setSkills] = useState<LatestSkillAssessment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const [userData, skillsData] = await Promise.all([
+          userRepository.getUser(TEST_EMPLOYEE_ID),
+          skillAssessmentRepository.getEmployeeSkills(TEST_EMPLOYEE_ID),
+        ])
+
+        if (!userData) {
+          throw new Error('ユーザーが見つかりませんでした')
+        }
+
+        setUser(userData)
+        setSkills(skillsData)
+      } catch (err) {
+        console.error('Failed to fetch data:', err)
+
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        setError(`データの取得に失敗しました。: ${errorMessage}`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const renderStars = (level: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-4 w-4 ${
-          i < level ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-        }`}
+        className={`h-4 w-4 ${i < level ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          }`}
       />
     ))
   }
+
+  if (loading) {
+    return (
+      <div className="flex flex-col h-full bg-gray-50 p-6 space-y-6">
+        <Skeleton className="h-20 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+        </div>
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>エラー</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
+  if (!user) return null
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -32,11 +93,11 @@ export function MySkillPage() {
       <div className="bg-white border-b px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100">
-            <User className="h-6 w-6 text-blue-600" />
+            <UserIcon className="h-6 w-6 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">マイスキル</h1>
-            <p className="text-sm text-gray-500">あなたのスキル情報を管理します</p>
+            <p className="text-sm text-gray-500">{user.name} ({user.position}) さんのスキル管理</p>
           </div>
         </div>
       </div>
@@ -66,7 +127,9 @@ export function MySkillPage() {
                 <div>
                   <p className="text-sm text-gray-500">平均レベル</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    {(skills.reduce((acc, s) => acc + s.level, 0) / skills.length).toFixed(1)}
+                    {skills.length > 0
+                      ? (skills.reduce((acc, s) => acc + s.level, 0) / skills.length).toFixed(1)
+                      : '0.0'}
                   </p>
                 </div>
               </div>
@@ -80,7 +143,7 @@ export function MySkillPage() {
                 <div>
                   <p className="text-sm text-gray-500">カテゴリ数</p>
                   <p className="text-2xl font-bold text-gray-800">
-                    {new Set(skills.map(s => s.category)).size}
+                    {new Set(skills.map(s => s.category1)).size}
                   </p>
                 </div>
               </div>
@@ -94,11 +157,13 @@ export function MySkillPage() {
             </div>
             <div className="divide-y">
               {skills.map((skill) => (
-                <div key={skill.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
+                <div key={`${skill.skill_id}-${skill.updated_at}`} className="px-6 py-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <h3 className="text-base font-medium text-gray-800">{skill.name}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{skill.category}</p>
+                      <h3 className="text-base font-medium text-gray-800">{skill.skill_name}</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {skill.category1} {skill.category2 ? `/ ${skill.category2}` : ''}
+                      </p>
                     </div>
                     <div className="flex items-center gap-1">
                       {renderStars(skill.level)}
@@ -106,6 +171,11 @@ export function MySkillPage() {
                   </div>
                 </div>
               ))}
+              {skills.length === 0 && (
+                <div className="px-6 py-8 text-center text-gray-500">
+                  スキルが登録されていません
+                </div>
+              )}
             </div>
           </div>
 
@@ -120,3 +190,4 @@ export function MySkillPage() {
     </div>
   )
 }
+
