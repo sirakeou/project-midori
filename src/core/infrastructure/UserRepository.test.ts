@@ -12,15 +12,17 @@ vi.mock('./database', () => ({
 describe('UserRepository', () => {
     let repository: UserRepository;
     const mockDb = {
+        path: 'test.db',
         select: vi.fn(),
         execute: vi.fn(),
+        close: vi.fn().mockResolvedValue(true),
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
         repository = new UserRepository();
         // Setup getDatabase to return mockDb
-        (dbModule.getDatabase as any).mockResolvedValue(mockDb);
+        vi.mocked(dbModule.getDatabase).mockResolvedValue(mockDb);
     });
 
     describe('getUser', () => {

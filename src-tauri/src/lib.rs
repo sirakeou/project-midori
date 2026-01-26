@@ -32,6 +32,12 @@ pub fn run() {
               sql: include_str!("../migrations/004_seed_personal_profiles.sql"),
               kind: MigrationKind::Up,
             },
+            Migration {
+              version: 5,
+              description: "seed_skill_assessments",
+              sql: include_str!("../migrations/005_seed_skill_assessments.sql"),
+              kind: MigrationKind::Up,
+            },
           ],
         )
         .build(),

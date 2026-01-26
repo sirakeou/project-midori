@@ -51,7 +51,7 @@ export class PersonalProfileRepository implements IPersonalProfile {
                 // The Insert logic in database/index.ts had updated_at.
                 // created_at is NOT in insert logic.
                 // So this is correct.
-                (profile as any).updated_at || new Date().toISOString(),
+                profile.updated_at || new Date().toISOString(),
             ]
         );
     }

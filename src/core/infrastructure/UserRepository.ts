@@ -43,7 +43,7 @@ export class UserRepository implements IUser {
     async updateUser(employeeId: string, updates: UserUpdate): Promise<void> {
         const db = await getDatabase();
         const fields: string[] = [];
-        const values: any[] = [];
+        const values: unknown[] = [];
 
         if (updates.name !== undefined) {
             fields.push('name = ?');

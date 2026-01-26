@@ -1,7 +1,7 @@
 
 import type { User } from '../core/entities/user';
 import type { Skill } from '../core/entities/skillMaster';
-import type { LatestSkillAssessment } from '../core/entities/skillAssessment';
+import type { LatestSkillAssessment, SkillAssessment } from '../core/entities/skillAssessment';
 import type { PersonalProfileRow } from '../core/infrastructure/database/types';
 import {
     Position,
@@ -62,7 +62,7 @@ export class MockDatabase {
         }
     ];
 
-    private assessments: any[] = [
+    private assessments: SkillAssessment[] = [
         {
             id: 1,
             employee_id: '100001',
@@ -103,7 +103,7 @@ export class MockDatabase {
     /**
      * Mock select method
      */
-    async select<T>(query: string, params?: any[]): Promise<T> {
+    async select<T>(query: string, params?: unknown[]): Promise<T> {
         console.log('[MockDB] select', query, params);
 
         // Simple routing based on query content
@@ -171,7 +171,7 @@ export class MockDatabase {
     /**
      * Mock execute method
      */
-    async execute(query: string, params?: any[]): Promise<void> {
+    async execute(query: string, params?: unknown[]): Promise<void> {
         console.log('[MockDB] execute', query, params);
         // In a real mock, we would update the internal arrays here
         // For now, just logging is enough as we are mainly fixing read issues
@@ -179,10 +179,10 @@ export class MockDatabase {
             // Mock insert skill
             this.skills.push({
                 id: this.skills.length + 1,
-                name: params?.[0],
-                category1: params?.[1],
-                category2: params?.[2],
-                description: params?.[3],
+                name: params?.[0] as string,
+                category1: params?.[1] as SkillCategory1,
+                category2: params?.[2] as SkillCategory2 | null,
+                description: params?.[3] as string | null,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             });

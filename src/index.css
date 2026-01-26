@@ -138,4 +138,10 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
+
+    /* rechartsのSVGチャートのフォーカスアウトラインを無効化 */
+    .recharts-wrapper svg,
+    .recharts-surface {
+        outline: none !important;
+    }
 }

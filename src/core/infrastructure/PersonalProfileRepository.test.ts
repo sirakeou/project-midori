@@ -23,14 +23,16 @@ vi.mock('./database', () => ({
 describe('PersonalProfileRepository', () => {
     let repository: PersonalProfileRepository;
     const mockDb = {
+        path: 'test.db',
         select: vi.fn(),
         execute: vi.fn(),
+        close: vi.fn().mockResolvedValue(true),
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
         repository = new PersonalProfileRepository();
-        (dbModule.getDatabase as any).mockResolvedValue(mockDb);
+        vi.mocked(dbModule.getDatabase).mockResolvedValue(mockDb);
     });
 
     describe('getLatestPersonalProfile', () => {

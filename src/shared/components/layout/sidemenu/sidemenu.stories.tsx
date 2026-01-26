@@ -4,6 +4,11 @@ import { Home, Search, Settings, User, Bell, FileText } from 'lucide-react';
 import { SideMenu } from './sidemenu';
 import type { SideMenuItem } from './sidemenu';
 
+type SideMenuStoryArgs = {
+  items: SideMenuItem[];
+  initialRoute?: string;
+};
+
 const meta = {
   title: 'Layout/SideMenu',
   component: SideMenu,
@@ -13,17 +18,17 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story, context) => (
-      <MemoryRouter initialEntries={[context.args.initialRoute || '/']}>
+      <MemoryRouter initialEntries={[(context.args as SideMenuStoryArgs).initialRoute || '/']}>
         <div className="h-screen">
           <Story />
         </div>
       </MemoryRouter>
     ),
   ],
-} satisfies Meta<typeof SideMenu>;
+} satisfies Meta<SideMenuStoryArgs>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<SideMenuStoryArgs>;
 
 const defaultItems: SideMenuItem[] = [
   {

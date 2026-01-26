@@ -12,14 +12,16 @@ vi.mock('./database', () => ({
 describe('SkillMasterRepository', () => {
     let repository: SkillMasterRepository;
     const mockDb = {
+        path: 'test.db',
         select: vi.fn(),
         execute: vi.fn(),
+        close: vi.fn().mockResolvedValue(true),
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
         repository = new SkillMasterRepository();
-        (dbModule.getDatabase as any).mockResolvedValue(mockDb);
+        vi.mocked(dbModule.getDatabase).mockResolvedValue(mockDb);
     });
 
     describe('getAllSkills', () => {
