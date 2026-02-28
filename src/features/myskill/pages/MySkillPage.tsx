@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User as UserIcon, AlertCircle } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { userRepository, skillAssessmentRepository, personalProfileRepository } from '@/core'
 import type { User, LatestSkillAssessment, PersonalProfile } from '@/core'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert'
+import { UserBasicInfo } from '../components/UserBasicInfo'
 import { ProfileSection } from '../components/ProfileSection'
 import { SkillInfoSection } from '../components/SkillInfoSection'
 
@@ -92,15 +93,7 @@ export function MySkillPage() {
     <div className="flex flex-col h-full bg-background">
       {/* ヘッダー部分 */}
       <div className="bg-card border-b px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-            <UserIcon className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">マイスキル</h1>
-            <p className="text-sm text-muted-foreground">{user.name} ({user.position}) さんのスキル管理</p>
-          </div>
-        </div>
+        <UserBasicInfo user={user} variant="header" />
       </div>
 
       {/* メインコンテンツ */}

@@ -54,6 +54,21 @@
     --color-error: #EF4444;
     --color-warning: #F59E0B;
     --color-info: #2CAC6E;
+
+    /* Green カラーパレット（スキルレベル表示用） */
+    --color-green-50: #E6F5EC;
+    --color-green-100: #C2E5D1;
+    --color-green-200: #9BD4B5;
+    --color-green-300: #71C598;
+    --color-green-400: #51B883;
+    --color-green-500: #2CAC6E;
+    --color-green-600: #259D63;
+    --color-green-700: #1D8B56;
+    --color-green-800: #197A4B;
+    --color-green-900: #115A36;
+    --color-green-1000: #0C472A;
+    --color-green-1100: #08351F;
+    --color-green-1200: #032213;
 }
 
 @layer base {

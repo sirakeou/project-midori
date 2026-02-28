@@ -17,10 +17,34 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
     AI: { label: 'AI', color: 'var(--color-primary)' },
 }
 
+/**
+ * レベルに応じた色を取得する
+ * デザインシステムで定義されたGreenカラーパレットを使用
+ */
+function getLevelColor(level: number, baseHsl: string): string {
+    // レベルに応じてGreenカラーパレットから色を選択
+    const colorMap: Record<number, string> = {
+        1: 'var(--color-green-100)', // 最も明るい
+        2: 'var(--color-green-300)',
+        3: 'var(--color-green-500)',
+        4: 'var(--color-green-700)',
+        5: 'var(--color-green-900)', // 最も濃い
+    }
+
+    // プライマリーカラーの場合はレベル別の色を返す
+    if (baseHsl.includes('var(--color-primary)')) {
+        return colorMap[level] || 'var(--color-green-600)'
+    }
+
+    return baseHsl
+}
+
 // スキルレベルのリングチャートコンポーネント
 function SkillLevelRing({ level, color }: { level: number; color: string }) {
+    const levelColor = getLevelColor(level, color)
+
     const chartData = [
-        { name: '達成', value: level, fill: color },
+        { name: '達成', value: level, fill: levelColor },
         { name: '未達成', value: 5 - level, fill: 'var(--color-muted)' },
     ]
 
@@ -42,7 +66,7 @@ function SkillLevelRing({ level, color }: { level: number; color: string }) {
                 </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-lg font-bold" style={{ color }}>
+                <span className="text-lg font-bold" style={{ color: levelColor }}>
                     {level}
                 </span>
             </div>
@@ -52,10 +76,11 @@ function SkillLevelRing({ level, color }: { level: number; color: string }) {
 
 export function TechnicalSkillsList({ skills }: TechnicalSkillsListProps) {
     const technicalSkills = useMemo(() => {
-        // テクニカルスキルでレベル1以上のものをフィルタリング
-        return skills.filter(
-            (skill) => skill.category1 === SkillCategory1.TECHNICAL && skill.level >= 1
-        )
+        // テクニカルスキルでレベル1以上のものをフィルタリングし、レベルの高い順に最大8つまで表示
+        return skills
+            .filter((skill) => skill.category1 === SkillCategory1.TECHNICAL && skill.level >= 1)
+            .sort((a, b) => b.level - a.level) // レベルの高い順
+            .slice(0, 8) // 上位8つ
     }, [skills])
 
     // カテゴリ別にグループ化（定義された順序で必ず表示）
@@ -100,7 +125,10 @@ export function TechnicalSkillsList({ skills }: TechnicalSkillsListProps) {
     return (
         <div className="bg-card rounded-lg shadow-sm border text-card-foreground h-full">
             <div className="px-6 py-4 border-b">
-                <h2 className="text-lg font-semibold text-foreground">テクニカルスキル</h2>
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                    <span className="w-1 h-6 bg-primary rounded-full inline-block"></span>
+                    テクニカルスキル
+                </h2>
             </div>
             <div className="px-6 py-6 space-y-6">
                 {categorizedSkills.map((category) => (

@@ -88,7 +88,10 @@ export function BusinessSkillsList({ skills }: BusinessSkillsListProps) {
     return (
         <div className="bg-card rounded-lg shadow-sm border text-card-foreground h-full flex flex-col">
             <div className="px-6 py-4 border-b">
-                <h2 className="text-lg font-semibold text-foreground">ビジネススキル</h2>
+                <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                    <span className="w-1 h-6 bg-primary rounded-full inline-block"></span>
+                    ビジネススキル
+                </h2>
             </div>
             <div className="px-6 py-2 flex items-center justify-center flex-1 outline-none">
                 {skills.length === 0 ? (

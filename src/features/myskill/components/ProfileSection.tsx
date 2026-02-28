@@ -1,4 +1,4 @@
-import { User as UserIcon, Briefcase, Heart, User as UserProfileIcon, AlertTriangle, Clock } from 'lucide-react'
+import { Briefcase, Heart, User as UserProfileIcon, AlertTriangle, Clock, User as UserIcon } from 'lucide-react'
 import type { User, PersonalProfile } from '@/core'
 import {
     Accordion,
@@ -39,31 +39,19 @@ export function ProfileSection({ user, profile }: ProfileSectionProps) {
 
     return (
         <div className="bg-card rounded-lg shadow-sm border overflow-hidden">
-            {/* ユーザー基本情報エリア */}
-            <div className="p-6 border-b bg-linear-to-br from-primary/5 to-background">
-                <div className="flex items-start gap-4">
-                    <div className="shrink-0">
-                        {/* プレースホルダー画像: グレー背景 + UserIcon */}
-                        <div className="w-24 h-32 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
-                            <UserIcon className="w-12 h-12" />
-                        </div>
-                    </div>
-                    <div className="flex-1 pt-2">
-                        <h2 className="text-xl font-bold text-foreground">{user.name}</h2>
-                        <p className="text-sm text-muted-foreground mt-1">社員番号：{user.employee_id}</p>
-                        <div className="mt-3 inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                            {user.position}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* 私の説明書エリア (アコーディオン) */}
             <div className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                     <span className="w-1 h-6 bg-primary rounded-full inline-block"></span>
                     私の説明書
                 </h3>
+
+                {/* ユーザー写真 */}
+                <div className="flex justify-center mb-6">
+                    <div className="w-24 h-32 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+                        <UserIcon className="w-12 h-12" />
+                    </div>
+                </div>
 
                 <Accordion type="multiple" className="w-full space-y-4" defaultValue={['career', 'hobbies', 'self_introduction', 'triggers']}>
 
